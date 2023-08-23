@@ -50,7 +50,7 @@ func writeLoop() {
 		writeMessage(org, msg)
 		fmt.Println("Wrote message:", msg, "for org:", org)
 
-		sleepTime := time.Duration(r.Intn(20-5+1)+5) * time.Second
+		sleepTime := time.Duration(r.Intn(5-1+1)+1) * time.Second
 		time.Sleep(sleepTime)
 	}
 }
