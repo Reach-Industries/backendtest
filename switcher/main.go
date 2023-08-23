@@ -38,26 +38,29 @@ func getBrokerURLs() []string {
 
 func writeLoop() {
 	fmt.Println("Starting Write Loop")
-	messages := []string{"Counter", "Text", "Time", "Dump"}
+	messages := []string{"Counter", "Text", "Time", "Counter", "Text", "Time", "Counter", "Text", "Time", "Dump"}
+	orgs := []string{"1", "2", "3", "4"}
 
 	src := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(src)
 
 	for {
+		org := orgs[r.Intn(len(orgs))]
 		msg := messages[r.Intn(len(messages))]
-		writeMessage(msg)
-		fmt.Println("Wrote message:", msg)
+		writeMessage(org, msg)
+		fmt.Println("Wrote message:", msg, "for org:", org)
 
-		sleepTime := time.Duration(r.Intn(60-10+1)+10) * time.Second
+		sleepTime := time.Duration(r.Intn(20-5+1)+5) * time.Second
 		time.Sleep(sleepTime)
 	}
 }
 
-func writeMessage(msg string) {
+func writeMessage(org string, msg string) {
+	msgJson := fmt.Sprintf(`{"org": "%s", "msg": "%s"}`, org, msg)
 	if err := switchWriter.WriteMessages(context.Background(),
 		kafka.Message{
 			Key:   []byte(time.Now().String()),
-			Value: []byte(msg),
+			Value: []byte(msgJson),
 		},
 	); err != nil {
 		fmt.Println("Error while writing to kafka", err)
